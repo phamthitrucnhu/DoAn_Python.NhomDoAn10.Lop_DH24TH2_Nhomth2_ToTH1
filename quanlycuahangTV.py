@@ -61,6 +61,7 @@ def open_product_manager():
         tree.heading(c, text=c)
         tree.column(c, width=100, anchor="center")
     tree.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
+    
 
     # --- Form nhập ---
     frm = tk.Frame(win)
@@ -252,12 +253,25 @@ def open_stock_manager():
     win.title("Quản lý kho hàng")
     win.geometry("950x600")
 
-    cols = ("maphieu","loaiphieu","ngaylap","nhacungcap","masanpham","soluong","dongia","ghichu")
+    window_width = 900
+    window_height = 600
+
+    screen_width = win.winfo_screenwidth()
+    screen_height = win.winfo_screenheight()
+
+    x = int((screen_width/2) - (window_width/2))
+    y = int((screen_height/2) - (window_height/2))
+
+    win.geometry(f"{window_width}x{window_height}+{x}+{y}")
+
+    cols = ("maphieu","loaiphieu","ngaylap","nhacungcap","masanpham","soluong","dongia","ghichu","thanhtien")
     tree = ttk.Treeview(win, columns=cols, show="headings")
     for c in cols:
         tree.heading(c, text=c)
         tree.column(c, width=110, anchor="center")
     tree.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
+    
+
 
     # --- Form nhập ---
     frm = tk.Frame(win); frm.pack(padx=10, pady=5, fill="x")
@@ -285,6 +299,9 @@ def open_stock_manager():
     tk.Label(frm, text="Ghi chú").grid(row=3, column=0)
     ghichu_entry = tk.Entry(frm, width=70); ghichu_entry.grid(row=3, column=1, columnspan=3, pady=5)
 
+    tk.Label(frm, text="Thành tiền").grid(row=4, column=0)
+    thanhtien_entry = tk.Entry(frm, width=70); thanhtien_entry.grid(row=4, column=1, columnspan=3, pady=5)
+
     # Biến trạng thái
     edit_mode = {"status": None, "id": None}
 
@@ -292,9 +309,10 @@ def open_stock_manager():
     def load_stock():
         tree.delete(*tree.get_children())
         try:
-            cursor.execute("SELECT maphieu,loaiphieu,ngaylap,nhacungcap,masanpham,soluong,dongia,ghichu FROM khohang")
+            cursor.execute("SELECT maphieu, loaiphieu, ngaylap, nhacungcap, masanpham, soluong, dongia, ghichu FROM khohang")
             for r in cursor.fetchall():
-                tree.insert("", tk.END, values=r)
+                thanhtien = r[5] * r[6]  # soluong * dongia
+                tree.insert("", tk.END, values=r + (thanhtien,))
         except Exception as e:
             messagebox.showerror("Lỗi", str(e))
 
@@ -323,6 +341,7 @@ def open_stock_manager():
         soluong_entry.delete(0, tk.END); soluong_entry.insert(0, v[5])
         dongia_entry.delete(0, tk.END); dongia_entry.insert(0, v[6])
         ghichu_entry.delete(0, tk.END); ghichu_entry.insert(0, v[7])
+        thanhtien_entry.delete(0, tk.END); thanhtien_entry.insert(0, v[8])
 
     # --- Thêm phiếu ---
     def add_phieu():
@@ -336,7 +355,8 @@ def open_stock_manager():
                 int(masp_entry.get()),
                 int(soluong_entry.get()),
                 float(dongia_entry.get() or 0),
-                ghichu_entry.get()
+                ghichu_entry.get(),
+                thanhtien_entry.get()
             )
             cursor.execute(sql, vals)
             db_commit(conn)
@@ -372,6 +392,7 @@ def open_stock_manager():
                 float(dongia_entry.get() or 0),
                 ghichu_entry.get(),
                 edit_mode["id"]
+                
             )
             cursor.execute(sql, vals)
             db_commit(conn)
