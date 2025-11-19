@@ -16,7 +16,7 @@ from datetime import datetime
 DB_CONFIG = {
     "host": "localhost",
     "user": "root",
-    "password": "15082005",        # sửa mật khẩu nếu cần
+    "password": "15082005",        
     "database": "qlcuahangTivi"
 }
 
@@ -986,18 +986,34 @@ def open_employee_manager():
 def main_menu():
     root = tk.Tk()
     root.title("MENU CHÍNH - QUẢN LÝ CỬA HÀNG TIVI")
-    root.geometry("600x450")
+
+    # ---- CANH GIỮA MÀN HÌNH ----
+    window_width = 600
+    window_height = 450
+
+    screen_width = root.winfo_screenwidth()
+    screen_height = root.winfo_screenheight()
+
+    x = int((screen_width/2) - (window_width/2))
+    y = int((screen_height/2) - (window_height/2))
+
+    root.geometry(f"{window_width}x{window_height}+{x}+{y}")
+    # --------------------------------
+
     root.resizable(False, False)
 
     tk.Label(root, text="QUẢN LÝ CỬA HÀNG TIVI", font=("Arial", 16, "bold")).pack(pady=20)
-    tk.Button(root, text="Quản lý sản phẩm", width=30, height=2, command=lambda:[root.destroy(), open_product_manager()]).pack(pady=8)
-    tk.Button(root, text="Quản lý kho hàng", width=30, height=2, command=lambda:[root.destroy(), open_stock_manager()]).pack(pady=8)
-    tk.Button(root, text="Quản lý hóa đơn", width=30, height=2, command=lambda:[root.destroy(), open_invoice_manager()]).pack(pady=8)
-    tk.Button(root, text="Quản lý khách hàng", width=30, height=2, command=lambda:[root.destroy(), open_customer_manager()]).pack(pady=8)
+    tk.Button(root, text="Quản lý sản phẩm", width=30, height=2,
+              command=lambda:[root.destroy(), open_product_manager()]).pack(pady=8)
+    tk.Button(root, text="Quản lý kho hàng", width=30, height=2,
+              command=lambda:[root.destroy(), open_stock_manager()]).pack(pady=8)
+    tk.Button(root, text="Quản lý hóa đơn", width=30, height=2,
+              command=lambda:[root.destroy(), open_invoice_manager()]).pack(pady=8)
+    tk.Button(root, text="Quản lý khách hàng", width=30, height=2,
+              command=lambda:[root.destroy(), open_customer_manager()]).pack(pady=8)
     tk.Button(root, text="Quản lý nhân viên", width=30, height=2,
-          command=lambda:[root.destroy(), open_employee_manager()]).pack(pady=8)
+              command=lambda:[root.destroy(), open_employee_manager()]).pack(pady=8)
     tk.Button(root, text="Thoát", width=30, height=2, command=root.destroy).pack(pady=8)
-    
 
     root.mainloop()
 
